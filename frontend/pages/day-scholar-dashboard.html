@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day Scholar Dashboard - Canteen System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1f7a6b;
+      --primary-dark: #176356;
+      --primary-soft: #e8f5f2;
+      --page: #f4fbf9;
+      --page-alt: #e9f2ef;
+      --card: rgba(255, 255, 255, 0.95);
+      --text: #17322d;
+      --muted: #61817b;
+      --border: #d7e6e2;
+      --shadow: 0 24px 60px rgba(20, 74, 64, 0.12);
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(160deg, var(--page) 0%, var(--page-alt) 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background: #fff;
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 40px 24px;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      margin-bottom: 40px;
+    }
+
+    .user-info h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    .user-info p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .sidebar-nav {
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #b4372d;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #fff1f0;
+      border-color: #f3c6c2;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .menu-toggle {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Feedback Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .btn-submit {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Wallet & Coupons */
+    .wallet-stat {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    .secondary-btn {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .primary-btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+      box-shadow: 0 10px 20px rgba(31, 122, 107, 0.2);
+    }
+
+    /* Timetable */
+    .timetable-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Success Overlay */
+    .success-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      animation: fadeIn 0.3s;
+    }
+
+    .success-overlay.active {
+      display: flex;
+    }
+
+    .tick-wrapper {
+      width: 100px;
+      height: 100px;
+      background: #1f7a6b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tick-icon {
+      color: #fff;
+      font-size: 4rem;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+    @media (max-width: 600px) {
+      .main-content {
+        padding: 16px;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="user-info">
+        <p>Welcome,</p>
+        <h2 id="profileName">Student Name</h2>
+        <p id="profileEmail">email@example.com</p>
+        <p id="profileRole" style="color: var(--primary); font-weight: 700; margin-top: 10px;">DAY SCHOLAR</p>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </aside>
+
+  <div id="overlay" class="overlay"></div>
+
+  <main class="main-content">
+    <header>
+      <button id="menuToggle" class="menu-toggle">☰</button>
+      <h1>Dashboard</h1>
+    </header>
+
+    <div id="dashboardAlerts" style="margin-bottom: 24px; display: none;">
+      <div id="alertContent" style="padding: 16px; border-radius: 16px; background: var(--primary-soft); color: var(--primary); font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 12px; border: 1px solid var(--border);">
+        <span>🔔</span> <span id="alertMessage"></span>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Coupon Wallet Card -->
+      <div class="card" id="walletCard">
+        <div class="card-title"><span>🎟️</span> Coupon Wallet</div>
+        <p style="color: var(--muted); font-size: 0.9rem; margin: 0;">Available Balance</p>
+        <div id="couponWalletCount" class="wallet-stat">0</div>
+        
+        <div style="display: flex; justify-content: space-between; margin: 16px 0; padding: 12px; background: var(--surface); border-radius: 12px; font-size: 0.85rem;">
+          <div style="text-align: center; flex: 1; border-right: 1px solid var(--border);">
+            <div style="color: var(--muted); margin-bottom: 4px;">Used Today</div>
+            <div id="usedTodayCount" style="font-weight: 700;">0</div>
+          </div>
+          <div style="text-align: center; flex: 1;">
+            <div style="color: var(--muted); margin-bottom: 4px;">Remaining</div>
+            <div id="remainingCount" style="font-weight: 700;">0</div>
+          </div>
+        </div>
+
+        <button id="showQrBtn" class="secondary-btn">Show My QR</button>
+      </div>
+
+      <!-- Buy Coupons Card -->
+      <div class="card">
+        <div class="card-title"><span>🛒</span> Buy Coupons</div>
+        <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Purchase meal coupons to use at the canteen.</p>
+        
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label for="couponQuantity">Quantity</label>
+          <input type="number" id="couponQuantity" min="1" value="1" style="margin-bottom: 4px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);">
+            <span>Price per coupon:</span>
+            <span id="pricePerCoupon">₹80</span>
+          </div>
+        </div>
+
+        <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 12px;">
+            <span>Total Price:</span>
+            <span id="totalPriceDisplay">₹80</span>
+          </div>
+          <button id="buyCouponsBtn" class="primary-btn">Buy Now</button>
+        </div>
+      </div>
+
+      <!-- Timetable Card -->
+      <div class="card">
+        <div class="card-title"><span>📅</span> Weekly Timetable</div>
+        <div id="timetableContainer">
+          <p id="timetableEmpty" style="color: var(--muted); font-size: 0.9rem;">No timetable uploaded yet.</p>
+          <img id="timetableDisplay" class="timetable-img" alt="Weekly Timetable">
+        </div>
+      </div>
+
+      <!-- Feedback Card -->
+      <div class="card">
+        <div class="card-title"><span>📝</span> Give Feedback</div>
+        <form id="feedbackForm">
+          <div class="form-group">
+            <label for="mealType">Meal Type</label>
+            <select id="mealType" required>
+              <option value="Lunch">Lunch</option>
+              <option value="Dinner">Dinner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="comment">Comment</label>
+            <textarea id="comment" placeholder="Tell us how the food was..." required></textarea>
+          </div>
+          <button type="submit" id="feedbackSubmitBtn" class="btn-submit">Submit Feedback</button>
+        </form>
+        <div id="feedbackStatus" style="margin-top: 10px; font-size: 0.85rem; text-align: center;"></div>
+      </div>
+
+      <!-- Transaction History Section -->
+      <div class="card" style="grid-column: span 1;">
+        <div class="card-title"><span>📜</span> Recent Transactions</div>
+        <div id="transactionList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+          <p style="color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px;">Loading history...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="purchaseSuccessOverlay" class="success-overlay">
+    <div class="tick-wrapper">
+      <div class="tick-icon">✓</div>
+    </div>
+    <h2 style="color: var(--primary); margin-bottom: 8px;">Purchase Successful!</h2>
+    <p style="color: var(--muted); margin-bottom: 24px;">Your coupons have been added to your wallet.</p>
+    <button id="closeSuccessBtn" class="primary-btn" style="max-width: 200px;">Back to Dashboard</button>
+  </div>
+
+  <div id="qrModal" class="success-overlay" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+    <div class="card" style="max-width: 340px; padding: 40px; text-align: center;">
+      <h3 style="margin-top: 0;">My Student QR</h3>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">Show this to the admin to use a coupon for your meal.</p>
+      <div id="qrcode" style="display: inline-block; padding: 16px; background: white; border-radius: 16px; margin-bottom: 20px;"></div>
+      <button id="closeQrBtn" class="primary-btn">Close QR</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/day-scholar-dashboard.js"></script>
+</body>
+
+</html>

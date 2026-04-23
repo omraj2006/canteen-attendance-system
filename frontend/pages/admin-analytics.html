@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Analytics - Canteen Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1f7a6b;
+      --primary-dark: #176356;
+      --primary-soft: #e8f5f2;
+      --page: #f4fbf9;
+      --page-alt: #e9f2ef;
+      --card: rgba(255, 255, 255, 0.95);
+      --text: #17322d;
+      --muted: #61817b;
+      --border: #d7e6e2;
+      --shadow: 0 24px 60px rgba(20, 74, 64, 0.12);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(160deg, var(--page) 0%, var(--page-alt) 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .back-btn {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--primary);
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    @media (max-width: 600px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 style="margin: 0;">Analytics Dashboard</h1>
+        <p style="color: var(--muted); margin: 4px 0 0;">Visualizing canteen usage and trends.</p>
+      </div>
+      <a href="admin.html" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <div class="charts-grid">
+      <!-- Usage Trends -->
+      <div class="card">
+        <div class="card-title"><span>📈</span> Usage Trends (Last 7 Days)</div>
+        <div style="flex: 1;">
+          <canvas id="usageChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Meal Distribution -->
+      <div class="card">
+        <div class="card-title"><span>🍱</span> Meal Distribution (Total)</div>
+        <div style="flex: 1; max-height: 300px; display: flex; justify-content: center;">
+          <canvas id="mealChart"></canvas>
+        </div>
+      </div>
+
+      <!-- User Engagement -->
+      <div class="card">
+        <div class="card-title"><span>👥</span> User Status (Day Scholars)</div>
+        <div style="flex: 1; max-height: 300px; display: flex; justify-content: center;">
+          <canvas id="userStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/admin-analytics.js"></script>
+</body>
+
+</html>
