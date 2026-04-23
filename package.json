@@ -2,10 +2,11 @@
   "name": "hostel-mess-attendance-system",
   "version": "1.0.0",
   "description": "Simple Node.js Express backend for hostel mess attendance",
-  "main": "backend/server.js",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node backend/server.js"
+    "start": "node api/index.js"
   },
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
