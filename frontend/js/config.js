@@ -1,7 +1,6 @@
 // Configuration for the Canteen Attendance System
-const IP_ADDRESS = "10.195.5.104";
-const PORT = 3000;
-const BASE_URL = `http://${IP_ADDRESS}:${PORT}`;
+const BASE_URL = window.location.origin;
+
 
 // Meal Timetable Data (Initial)
 const MEAL_TIMETABLE = {
