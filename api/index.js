@@ -24,7 +24,9 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['admin', 'hosteler', 'day-scholar'], required: true },
   room_no: { type: String }, // Required for hostelers
+  hostel: { type: String, enum: ['Boys', 'Girls', 'N/A'], default: 'N/A' },
   couponCount: { type: Number, default: 0 },
+
   isActivated: { type: Boolean, default: true }, // False for managed hostelers who haven't set email
   createdAt: { type: Date, default: Date.now }
 });
@@ -136,13 +138,15 @@ app.post("/login", async (req, res) => {
   try {
     const { emailOrId, password } = req.body;
 
-    // Search by email OR room_no (for unactivated hostelers)
+    // Search by email OR room_no OR full name (for unactivated hostelers)
     const user = await User.findOne({
       $or: [
         { email: emailOrId.toLowerCase() },
-        { room_no: emailOrId.toUpperCase() }
+        { room_no: emailOrId.toUpperCase() },
+        { name: { $regex: new RegExp(`^${emailOrId}$`, "i") } }
       ]
     });
+
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
