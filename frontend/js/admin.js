@@ -17,29 +17,29 @@ const uploadStatus = document.getElementById("uploadStatus");
 
 // --- Auth ---
 if (localStorage.getItem("role") !== "admin") {
-  window.location.href = "login.html";
+  window.location.href = "/login.html";
 }
 
 logoutBtn.addEventListener("click", () => {
   clearAuthState();
-  window.location.href = "login.html";
+  window.location.href = "/login.html";
 });
 
 if (openScannerBtn) {
   openScannerBtn.addEventListener("click", () => {
-    window.location.href = "scanner.html";
+    window.location.href = "/scanner.html";
   });
 }
 
 if (openCouponsBtn) {
   openCouponsBtn.addEventListener("click", () => {
-    window.location.href = "admin-coupons.html";
+    window.location.href = "/admin-coupons.html";
   });
 }
 
 if (openAnalyticsBtn) {
   openAnalyticsBtn.addEventListener("click", () => {
-    window.location.href = "admin-analytics.html";
+    window.location.href = "/admin-analytics.html";
   });
 }
 
