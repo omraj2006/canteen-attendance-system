@@ -12,8 +12,11 @@
     { "source": "/attendance/(.*)", "destination": "/api/index.js" },
     { "source": "/download/(.*)", "destination": "/api/index.js" },
     { "source": "/", "destination": "/frontend/pages/login.html" },
+    { "source": "/(.*\\.html)", "destination": "/frontend/pages/$1" },
     { "source": "/pages/(.*)", "destination": "/frontend/pages/$1" },
-    { "source": "/js/(.*)", "destination": "/frontend/js/$1" }
+    { "source": "/js/(.*)", "destination": "/frontend/js/$1" },
+    { "source": "/css/(.*)", "destination": "/frontend/css/$1" },
+    { "source": "/assets/(.*)", "destination": "/frontend/assets/$1" }
   ]
 }
 
