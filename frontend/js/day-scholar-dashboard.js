@@ -265,6 +265,53 @@ if (closeQrBtn) {
   });
 }
 
+// --- Coupon History Modal ---
+const showHistoryBtn = document.getElementById("showHistoryBtn");
+const historyModal = document.getElementById("historyModal");
+const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+const historyList = document.getElementById("historyList");
+
+if (showHistoryBtn) {
+  showHistoryBtn.addEventListener("click", () => {
+    historyModal.classList.add("active");
+    fetchUsageHistory();
+  });
+}
+
+if (closeHistoryBtn) {
+  closeHistoryBtn.addEventListener("click", () => {
+    historyModal.classList.remove("active");
+  });
+}
+
+async function fetchUsageHistory() {
+  if (!historyList) return;
+  historyList.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">Loading history...</p>';
+
+  try {
+    const data = await fetchWithHeader(`${BASE_URL}/api/user/usage-history/${userId}`);
+    if (data.length === 0) {
+      historyList.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 20px;">No coupon usage recorded yet.</p>';
+      return;
+    }
+
+    historyList.innerHTML = data.map(h => `
+      <div style="padding: 14px; border-radius: 12px; background: #f8faf9; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-weight: 700; color: var(--primary);">${h.meal}</div>
+          <div style="font-size: 0.75rem; color: var(--muted);">${h.dateUsed} | ${h.timeUsed}</div>
+        </div>
+        <div style="font-size: 0.8rem; font-weight: 600; padding: 4px 8px; background: var(--primary-soft); color: var(--primary); border-radius: 6px;">
+          Used 1
+        </div>
+      </div>
+    `).join("");
+  } catch (error) {
+    historyList.innerHTML = '<p style="text-align: center; color: var(--danger-text); padding: 20px;">Failed to load history.</p>';
+    console.error("Usage history error:", error);
+  }
+}
+
 // --- Feedback Submission ---
 const feedbackForm = document.getElementById("feedbackForm");
 const feedbackStatus = document.getElementById("feedbackStatus");

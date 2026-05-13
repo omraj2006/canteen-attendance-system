@@ -227,10 +227,19 @@ app.get("/api/user-profile/:userId", async (req, res) => {
 // --- Transactions ---
 app.get("/api/user/transactions/:userId", async (req, res) => {
   try {
-    const transactions = await Transaction.find({ userId: req.params.userId }).sort({ createdAt: -1 }).limit(20);
+    const transactions = await Transaction.find({ userId: req.params.userId }).sort({ date: -1, time: -1 }).limit(20);
     res.json(transactions);
   } catch (err) {
     res.status(500).json({ message: "Error fetching transactions" });
+  }
+});
+
+app.get("/api/user/usage-history/:userId", async (req, res) => {
+  try {
+    const usage = await CouponUsage.find({ userId: req.params.userId }).sort({ dateUsed: -1, timeUsed: -1 });
+    res.json(usage);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching usage history" });
   }
 });
 
@@ -296,6 +305,16 @@ app.post("/api/use-coupon", async (req, res) => {
       userId, name: user.name, meal: mealType, dateUsed: today, timeUsed: getCurrentTimeString()
     });
     await usage.save();
+
+    const transaction = new Transaction({
+      userId,
+      type: 'USE',
+      amount: 1,
+      meal: mealType,
+      date: today,
+      time: getCurrentTimeString()
+    });
+    await transaction.save();
 
     lastScanTimes[userId] = now;
     res.json({ message: "Coupon used!", name: user.name, remainingCoupons: user.couponCount, role: "Day Scholar" });
