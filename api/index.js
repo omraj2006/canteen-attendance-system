@@ -74,7 +74,15 @@ const TransactionSchema = new mongoose.Schema({
 const Transaction = mongoose.model("Transaction", TransactionSchema);
 
 // --- Helpers & State ---
-const getTodayDateString = () => new Date().toLocaleDateString('en-CA');
+const TIMEZONE = 'Asia/Kolkata';
+const getTodayDateString = () => new Date().toLocaleDateString('en-CA', { timeZone: TIMEZONE });
+const getCurrentTimeString = () => new Date().toLocaleTimeString('en-US', { 
+  timeZone: TIMEZONE, 
+  hour12: true,
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+});
 const lastScanTimes = {}; // In-memory cooldown (resets on server restart)
 
 // ================= AUTH =================
@@ -244,7 +252,7 @@ app.post("/api/buy-coupons", async (req, res) => {
       type: 'BUY',
       amount: qty,
       date: getTodayDateString(),
-      time: new Date().toLocaleTimeString()
+      time: getCurrentTimeString()
     });
     await transaction.save();
 
@@ -285,7 +293,7 @@ app.post("/api/use-coupon", async (req, res) => {
     await user.save();
 
     const usage = new CouponUsage({
-      userId, name: user.name, meal: mealType, dateUsed: today, timeUsed: new Date().toLocaleTimeString()
+      userId, name: user.name, meal: mealType, dateUsed: today, timeUsed: getCurrentTimeString()
     });
     await usage.save();
 
@@ -319,7 +327,7 @@ app.post("/mark-attendance", async (req, res) => {
     if (marked) return res.status(400).json({ message: "Already marked for today" });
 
     const attendance = new Attendance({
-      userId, name: user.name, room_no: user.room_no, mealType: mealType.toLowerCase(), date: today, time: new Date().toLocaleTimeString()
+      userId, name: user.name, room_no: user.room_no, mealType: mealType.toLowerCase(), date: today, time: getCurrentTimeString()
     });
     await attendance.save();
 
@@ -355,7 +363,7 @@ app.get("/api/admin/analytics/usage-7days", async (req, res) => {
   const last7Days = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
-    last7Days.push(d.toLocaleDateString('en-CA'));
+    last7Days.push(d.toLocaleDateString('en-CA', { timeZone: TIMEZONE }));
   }
   const usageByDate = await Promise.all(last7Days.map(async date => {
     const count = await CouponUsage.countDocuments({ dateUsed: date });
